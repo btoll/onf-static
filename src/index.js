@@ -43,7 +43,7 @@ module.exports = {
 
             return !nodes.length ?
                 'No results found' :
-                generator.print(nodes);
+                generator.print(nodes, file);
         });
     },
     register(v) {
