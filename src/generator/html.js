@@ -67,7 +67,7 @@ module.exports = {
                 ].join('\n'));
             }
 
-            fs.writeFile(`${path.basename(file)}_.html`, this.makeTpl(file, rows), 'utf8', err => {
+            fs.writeFile(`${path.basename(file)}_.html`, this.makeTpl(file, rows.join('')), 'utf8', err => {
                 if (err) {
                     reject('[ERROR] Oh no, something went wrong!');
                 } else {
