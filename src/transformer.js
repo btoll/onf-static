@@ -176,7 +176,11 @@ const get = ctx => {
             break;
 
         case 'ReturnStatement':
-            value = `return ${transformer.getNodeValue(node.argument)}`;
+            const nodeArgument = node.argument;
+
+            value = !nodeArgument ?
+                'return' :
+                `return ${transformer.getNodeValue(nodeArgument)}`;
             break;
 
         case 'SequenceExpression':

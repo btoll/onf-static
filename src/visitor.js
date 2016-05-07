@@ -85,13 +85,17 @@ module.exports = {
     },
 
     ReturnStatement(node, parent, results) {
-        const returnArgs = node.argument.arguments;
+        const nodeArgument = node.argument;
 
-        if (returnArgs) {
-            returnArgs.forEach(node => this.visit(node, parent, results));
+        if (nodeArgument) {
+            const returnArgs = nodeArgument.arguments;
+
+            if (returnArgs) {
+                returnArgs.forEach(node => this.visit(node, parent, results));
+            }
+
+            this.visit(nodeArgument, node, results);
         }
-
-        this.visit(node.argument, node, results);
     },
 
     VariableDeclarator(node, parent, results) {
