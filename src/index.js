@@ -60,8 +60,9 @@ module.exports = {
 
             logger.debug(lineSeparator);
             return !len ?
-                (logger.debug('Exiting without printing'), 'No results found') :
-                (logger.debug('Printing'), generator.print(nodes, file));
+                // Note to re-enable logging in case it had been disabled.
+                (logger.debug('Exiting without printing'), logger.enable(), 'No results found') :
+                (logger.debug('Printing'), logger.enable(), generator.print(nodes, file));
         });
     },
     register(v) {
