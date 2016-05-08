@@ -1,9 +1,5 @@
 'use strict';
 
-const chalk = require('chalk');
-const jsBeautify = require('js-beautify').js_beautify;
-const transformer = require('../transformer');
-
 module.exports = {
     print: results =>
         // A Promise isn't strictly necessary here.
@@ -17,14 +13,11 @@ module.exports = {
                 rows.push(
                     // NOTE: It looks odd to wrap the strings in an array only to join
                     // them back together into a string, but it's to control the spacing.
-                    chalk.bgWhite.blue([
-                        `// Type ${entry.type}`,
-                        `// Lines ${loc.start.line}-${loc.end.line}:`,
-                        desc ?
-                            `// ${desc}\n` :
-                            ''
-                    ].join('\n')),
-                    `${jsBeautify(transformer.getNodeValue(entry))}\n`
+                    `--> Type ${entry.type}`,
+                    `--> Lines ${loc.start.line}-${loc.end.line}`,
+                    desc ?
+                        `--> ${desc}\n` :
+                        ''
                 );
             }
 
