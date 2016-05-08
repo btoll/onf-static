@@ -38,6 +38,10 @@ module.exports = {
         this.visit(node.right, node, results);
     },
 
+    BlockStatement(node, parent, results) {
+        node.body.forEach(body => this.visit(body, parent, results));
+    },
+
     CallExpression(node, parent, results) {
         const callArgs = node.arguments;
         const callee = node.callee;
@@ -65,6 +69,17 @@ module.exports = {
     FunctionExpression(node, parent, results) {
         // TODO
         node.body.body.forEach(body => this.visit(body, node, results));
+    },
+
+    IfStatement(node, parent, results) {
+        const alternate = node.alternate;
+
+        this.visit(node.test, node, results);
+        this.visit(node.consequent, node, results);
+
+        if (alternate) {
+            this.visit(alternate, node, results);
+        }
     },
 
     MemberExpression(node, parent, results) {
