@@ -13,6 +13,10 @@
 //
 
 module.exports = {
+    ArrayExpression(node, parent, results) {
+        node.elements.forEach(element => this.visit(element, node, results));
+    },
+
     ArrowFunctionExpression(node, parent, results) {
         const bodies = node.body.body;
 
