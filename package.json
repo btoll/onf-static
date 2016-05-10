@@ -17,7 +17,6 @@
   },
   "homepage": "https://github.com/btoll/s#readme",
   "dependencies": {
-    "chalk": "^1.1.3",
     "esprima": "^2.7.2",
     "js-beautify": "^1.6.2",
     "logger": "git+https://github.com/btoll/logger.git",

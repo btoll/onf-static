@@ -14,9 +14,9 @@ module.exports = {
                     // NOTE: It looks odd to wrap the strings in an array only to join
                     // them back together into a string, but it's to control the spacing.
                     `--> Type ${entry.type}`,
-                    `--> Lines ${loc.start.line}-${loc.end.line}`,
+                    `------> Lines ${loc.start.line}-${loc.end.line}`,
                     desc ?
-                        `--> ${desc}\n` :
+                        `------> ${desc}\n` :
                         ''
                 );
             }
