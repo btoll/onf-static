@@ -103,7 +103,23 @@ module.exports = {
         this.visit(node.value, parent, results);
     },
 
+    // TODO: DRY!
     ReturnStatement(node, parent, results) {
+        const nodeArgument = node.argument;
+
+        if (nodeArgument) {
+            const returnArgs = nodeArgument.arguments;
+
+            if (returnArgs) {
+                returnArgs.forEach(node => this.visit(node, parent, results));
+            }
+
+            this.visit(nodeArgument, node, results);
+        }
+    },
+
+    // TODO: DRY!
+    UnaryExpression(node, parent, results) {
         const nodeArgument = node.argument;
 
         if (nodeArgument) {
