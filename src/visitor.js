@@ -118,6 +118,18 @@ module.exports = {
         }
     },
 
+    SwitchStatement(node, parent, results) {
+        this.visit(node.discriminant, node, results);
+
+        node.cases.forEach(switchCase => {
+            this.visit(switchCase.test, switchCase, results);
+
+            switchCase.consequent.forEach(consequent =>
+                this.visit(consequent, switchCase, results)
+            );
+        });
+    },
+
     // TODO: DRY!
     UnaryExpression(node, parent, results) {
         const nodeArgument = node.argument;
