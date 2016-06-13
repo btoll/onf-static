@@ -45,11 +45,21 @@ module.exports = {
 
         return getSuite(file, isData)
         .then(suite => {
+            let nodes;
+
             logger.debug(lineSeparator);
             logger.debug('Creating AST and capturing nodes');
             logger.debug(lineSeparator);
 
-            const nodes = visitTree(suite);
+            try {
+                nodes = visitTree(suite);
+            } catch (err) {
+                const errMsg = 'Invalid JavaScript';
+
+                logger.fatal(errMsg);
+                throw new Error(errMsg);
+            }
+
             const len = nodes.length;
 
             logger.debug(lineSeparator);
@@ -60,9 +70,8 @@ module.exports = {
 
             logger.debug(lineSeparator);
             return !len ?
-                // Note to re-enable logging in case it had been disabled.
-                (logger.debug('Exiting without printing'), logger.enable(), 'No results found') :
-                (logger.debug('Printing'), logger.enable(), generator.print(nodes, file));
+                (logger.debug('Exiting without printing'), 'No results found') :
+                (logger.debug('Printing'), generator.print(nodes, file));
         });
     },
     register(v) {
