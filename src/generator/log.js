@@ -18,7 +18,7 @@ module.exports = {
                     // them back together into a string, but it's to control the spacing.
                     [
                         `// Type ${entry.type}`,
-                        `// Lines ${loc.start.line}-${loc.end.line}:`,
+                        `// Lines ${loc.start.line}-${loc.end.line}`,
                         desc ?
                             `// ${desc}\n` :
                             ''
