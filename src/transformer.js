@@ -14,7 +14,7 @@ const getArrayElements = elements => {
 };
 
 const getParams = params =>
-    params.map(arg => transformer.getNodeValue(arg)).join(',');
+    params.map(transformer.getNodeValue).join(',');
 
 const getParamsWrapped = params =>
     [
@@ -256,9 +256,7 @@ const get = ctx => {
 };
 
 const transformer = {
-    getNodeValue: ctx => {
-        return get(transformer.map(ctx));
-    },
+    getNodeValue: ctx => get(transformer.map(ctx)),
 
     // This would override the base transformer's implementation that could
     // simply be an identityFn.

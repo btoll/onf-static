@@ -5,8 +5,8 @@ const path = require('path');
 const transformer = require('../transformer');
 
 module.exports = {
-    makeTpl: (file, results) => {
-        return `<!DOCTYPE html>
+    makeTpl: (file, results) =>
+        `<!DOCTYPE html>
             <html>
             <head>
             <meta charset="utf-8">
@@ -47,8 +47,7 @@ module.exports = {
                 ${results}
             </body>
             </html>
-        `;
-    },
+        `,
 
     print: function (results, file) {
         return new Promise((resolve, reject) => {
