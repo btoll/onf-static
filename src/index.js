@@ -25,7 +25,8 @@ function getSuite(file, isData) {
 function visitTree(suite) {
     return visitor.visit(esprima.parse(suite, {
         comment: true,
-        loc: true
+        loc: true,
+        sourceType: 'module'
     }), null, []);
 }
 
