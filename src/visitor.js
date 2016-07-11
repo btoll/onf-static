@@ -12,6 +12,29 @@
 //        });
 //
 
+const binaryExpression = function (node, parent, results) {
+    this.visit(node.left, node, results);
+    this.visit(node.right, node, results);
+};
+
+const logicalExpression = binaryExpression;
+
+const returnStatement = function (node, parent, results) {
+    const nodeArgument = node.argument;
+
+    if (nodeArgument) {
+        const returnArgs = nodeArgument.arguments;
+
+        if (returnArgs) {
+            returnArgs.forEach(node => this.visit(node, parent, results));
+        }
+
+        this.visit(nodeArgument, node, results);
+    }
+};
+
+const unaryExpression = returnStatement;
+
 module.exports = {
     ArrayExpression(node, parent, results) {
         node.elements.forEach(element => this.visit(element, node, results));
@@ -30,16 +53,12 @@ module.exports = {
         this.visit(node.right, node, results);
     },
 
-    // TODO: DRY!
     BinaryExpression(node, parent, results) {
-        this.visit(node.left, node, results);
-        this.visit(node.right, node, results);
+        binaryExpression.call(this, node, parent, results);
     },
 
-    // TODO: DRY!
     LogicalExpression(node, parent, results) {
-        this.visit(node.left, node, results);
-        this.visit(node.right, node, results);
+        logicalExpression.call(this, node, parent, results);
     },
 
     BlockStatement(node, parent, results) {
@@ -103,19 +122,8 @@ module.exports = {
         this.visit(node.value, parent, results);
     },
 
-    // TODO: DRY!
     ReturnStatement(node, parent, results) {
-        const nodeArgument = node.argument;
-
-        if (nodeArgument) {
-            const returnArgs = nodeArgument.arguments;
-
-            if (returnArgs) {
-                returnArgs.forEach(node => this.visit(node, parent, results));
-            }
-
-            this.visit(nodeArgument, node, results);
-        }
+        returnStatement.call(this, node, parent, results);
     },
 
     SwitchStatement(node, parent, results) {
@@ -130,19 +138,8 @@ module.exports = {
         });
     },
 
-    // TODO: DRY!
     UnaryExpression(node, parent, results) {
-        const nodeArgument = node.argument;
-
-        if (nodeArgument) {
-            const returnArgs = nodeArgument.arguments;
-
-            if (returnArgs) {
-                returnArgs.forEach(node => this.visit(node, parent, results));
-            }
-
-            this.visit(nodeArgument, node, results);
-        }
+        unaryExpression.call(this, node, parent, results);
     },
 
     VariableDeclarator(node, parent, results) {
