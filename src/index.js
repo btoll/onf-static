@@ -6,8 +6,8 @@ const logger = require('logger');
 const visitor = require('./visitor');
 const lineSeparator = '----------------------';
 
-function getSuite(file, isData) {
-    return new Promise((resolve, reject) => {
+const getSuite = (file, isData = false) =>
+    new Promise((resolve, reject) => {
         if (isData) {
             resolve(file);
         } else {
@@ -20,18 +20,16 @@ function getSuite(file, isData) {
             });
         }
     });
-}
 
-function visitTree(suite) {
-    return visitor.visit(esprima.parse(suite, {
+const visitTree = suite =>
+    visitor.visit(esprima.parse(suite, {
         comment: true,
         loc: true,
         sourceType: 'module'
     }), null, []);
-}
 
 module.exports = {
-    makeTree(file, generator, isData) {
+    makeTree(file, generator, verbosity = 0, isData = false) {
         if (!file) {
             throw new Error('No file given');
         }
@@ -72,7 +70,7 @@ module.exports = {
             logger.debug(lineSeparator);
             return !len ?
                 (logger.debug('Exiting without printing'), 'No results found') :
-                (logger.debug('Printing'), generator.print(nodes, file));
+                (logger.debug('Printing'), generator.print(nodes, verbosity));
         });
     },
     register(v) {
