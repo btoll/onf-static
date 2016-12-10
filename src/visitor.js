@@ -1,17 +1,5 @@
 'use strict';
 
-// NOTE:
-// We wrap the node in a context object so we can specify our own custom node types like
-// 'TooManyReturns', etc.  It's better to do this than to modify objects we don't own,
-// which is no bueno on its own merits, and also because it can lead to headaches since
-// we're collecting references NOT copies.
-//
-//        results.push({
-//            node,
-//            type: 'TooManyReturns'
-//        });
-//
-
 const binaryExpression = function (node, parent, results) {
     this.visit(node.left, node, results);
     this.visit(node.right, node, results);
@@ -107,6 +95,11 @@ module.exports = {
 
     MemberExpression(node, parent, results) {
         this.visit(node.object, parent, results);
+    },
+
+    NewExpression(node, parent, results) {
+        node.arguments.forEach(argument => this.visit(argument, parent, results));
+//        this.visit(node.arguments[0], node, results);
     },
 
     ObjectExpression(node, parent, results) {

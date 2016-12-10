@@ -1,6 +1,18 @@
 /* eslint-disable no-case-declarations,one-var */
 'use strict';
 
+// NOTE:
+// We wrap the node in a context object so we can specify our own custom node types like
+// 'TooManyReturns', etc.  It's better to do this than to modify objects we don't own,
+// which is no bueno on its own merits, and also because it can lead to headaches since
+// we're collecting references NOT copies.
+//
+//        results.push({
+//            node,
+//            type: 'TooManyReturns'
+//        });
+//
+
 const getArrayElements = elements => {
     const arr = [];
 
@@ -33,9 +45,8 @@ const makeForExpression = (node, type) =>
     ].join('');
 
 const get = ctx => {
-    const node = ctx.node,
-        nodeType = node.type;
-
+    const node = ctx.node;
+    const nodeType = node.type;
     let value;
 
     switch (nodeType) {
