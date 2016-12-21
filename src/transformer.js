@@ -81,12 +81,12 @@ const get = ctx => {
             break;
 
         case 'BlockStatement':
-            value = node.body.map(node => `${transformer.getNodeValue(node)} ;`).join('');
+            value = node.body.map(node => `${transformer.getNodeValue(node)};`).join('');
             break;
 
         case 'CallExpression':
         case 'NewExpression':
-            value = `${transformer.getNodeValue(node.callee)} (${getParams(node.arguments)})`;
+            value = `${transformer.getNodeValue(node.callee)}(${getParams(node.arguments)})`;
 
             if (nodeType === 'NewExpression') {
                 value = `new ${value}`;
@@ -207,9 +207,30 @@ const get = ctx => {
             value = res.concat(transformer.getNodeValue(expressions.slice(1)));
             break;
 
+        case 'TemplateElement':
+            value = node.value.raw;
+            break;
+
+        // TODO: This is just basic support for template strings.
         case 'TemplateLiteral':
-            // TODO
-            value = '`TODO: parse template strings`';
+            let a = [];
+
+            for (let i = 0, len = node.quasis.length; i < len; i++) {
+                let n = node.quasis[i];
+
+                if (!n.value.raw) {
+                    a.push(
+                        '${',
+    //                    this.getNodeValue(node.expressions.shift()),
+                        transformer.getNodeValue(node.expressions[0]),
+                        '}'
+                    );
+                } else {
+                    a.push(transformer.getNodeValue(n));
+                }
+            }
+
+            value = `\`${a.join('')}\``;
             break;
 
         case 'ThisExpression':

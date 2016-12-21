@@ -4,10 +4,11 @@ const jsBeautify = require('js-beautify').js_beautify;
 const transformer = require('../transformer');
 
 module.exports = {
-    print: (results, verbosity) =>
+    print: (results, options) =>
         // A Promise isn't strictly necessary here.
-        new Promise((resolve) => {
+        new Promise(resolve => {
             const rows = [];
+            const verbosity = options.verbose;
 
             for (const entry of results) {
                 const desc = entry.desc;

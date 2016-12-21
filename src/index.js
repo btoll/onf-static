@@ -5,6 +5,13 @@ const fs = require('fs');
 const logger = require('logger');
 const visitor = require('./visitor');
 
+let defaultOptions = {
+    active: false,
+    inactive: false,
+    useMap: false,
+    verbose: false
+};
+
 const lineSeparator = '----------------------';
 
 const getSuite = (file, isData = false) =>
@@ -22,7 +29,7 @@ const getSuite = (file, isData = false) =>
         }
     });
 
-const makeTree = (file, generator, verbosity = 0, isData = false) => {
+const makeTree = (file, generator, options, isData = false) => {
     if (!file) {
         throw new Error('No file given');
     }
@@ -44,7 +51,7 @@ const makeTree = (file, generator, verbosity = 0, isData = false) => {
         logger.debug(lineSeparator);
 
         try {
-            nodes = visitTree(suite);
+            nodes = visitTree(suite, options = defaultOptions);
         } catch (err) {
             const errMsg = 'Invalid JavaScript';
 
@@ -66,7 +73,7 @@ const makeTree = (file, generator, verbosity = 0, isData = false) => {
             ) :
             (
                 logger.debug('Printing'),
-                generator.print(nodes, verbosity)
+                generator.print(nodes, options || defaultOptions)
             );
     });
 };
@@ -82,14 +89,28 @@ const register = v => {
     logger.debug(lineSeparator);
 };
 
-const visitTree = suite =>
-    visitor.visit(esprima.parse(suite, {
+const setOptions = options =>
+    defaultOptions = options;
+
+const visitTree = (suite, options) => {
+    // TODO: Make better?
+    visitor.options = options;
+
+    const container = options.useMap ?
+        new Map() :
+        [];
+
+    return visitor.visit(esprima.parse(suite, {
+        // Having this set to `module` is best practice!
+        sourceType: 'module',
         comment: true,
         loc: true
-    }), null, []);
+    }), null, container);
+};
 
 module.exports = {
     makeTree,
-    register
+    register,
+    setOptions
 };
 
