@@ -30,6 +30,8 @@ const getSuite = (file, isData = false) =>
     });
 
 const makeTree = (file, generator, options, isData = false) => {
+    const opts = options || defaultOptions;
+
     if (!file) {
         throw new Error('No file given');
     }
@@ -51,7 +53,7 @@ const makeTree = (file, generator, options, isData = false) => {
         logger.debug(lineSeparator);
 
         try {
-            nodes = visitTree(suite, options = defaultOptions);
+            nodes = visitTree(suite, opts);
         } catch (err) {
             const errMsg = 'Invalid JavaScript';
 
@@ -59,7 +61,10 @@ const makeTree = (file, generator, options, isData = false) => {
             throw new Error(errMsg);
         }
 
-        const len = nodes.length;
+        // TODO: This is clunky.
+        const len = !opts.useMap ?
+            nodes.length :
+            nodes.size;
 
         logger.debug(lineSeparator);
         logger.debug(`Captured ${len} node${len !== 1 ? 's' : ''}`);
@@ -73,7 +78,7 @@ const makeTree = (file, generator, options, isData = false) => {
             ) :
             (
                 logger.debug('Printing'),
-                generator.print(nodes, options || defaultOptions)
+                generator.print(nodes, opts)
             );
     });
 };
