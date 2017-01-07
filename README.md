@@ -1,4 +1,4 @@
-# s
+# onf-static
 
 Framework for building static analysis tools in JavaScript.
 
@@ -12,7 +12,7 @@ See the following tools:
 
 ## Installation
 
-`npm install https://github.com/btoll/s.git -g`
+`npm install https://github.com/btoll/onf-static.git -g`
 
 [dump_describes]: https://github.com/btoll/dump_describes
 [rupert]: https://github.com/btoll/rupert

@@ -1,21 +1,14 @@
 {
-  "name": "s",
+  "name": "onf-static",
   "version": "0.1.0",
-  "description": "`npm install https://github.com/btoll/s.git -g`",
+  "description": "`npm install https://github.com/btoll/onf-static.git -g`",
   "main": "./src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/btoll/s.git"
+    "url": "git+https://github.com/btoll/onf-static.git"
   },
   "author": "Benjamin Toll",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/btoll/s/issues"
-  },
-  "homepage": "https://github.com/btoll/s#readme",
   "dependencies": {
     "esprima": "^2.7.2",
     "js-beautify": "^1.6.2",
