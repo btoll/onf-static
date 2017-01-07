@@ -2,7 +2,7 @@
 
 const esprima = require('esprima');
 const fs = require('fs');
-const logger = require('logger');
+const logger = require('onf-logger');
 const visitor = require('./visitor');
 
 let defaultOptions = {
