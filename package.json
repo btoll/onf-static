@@ -8,7 +8,7 @@
     "url": "git+https://github.com/btoll/onf-static.git"
   },
   "author": "Benjamin Toll",
-  "license": "MIT",
+  "license": "GPLv3",
   "dependencies": {
     "esprima": "^2.7.2",
     "js-beautify": "^1.6.2",
