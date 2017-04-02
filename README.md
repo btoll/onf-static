@@ -6,15 +6,15 @@ Framework for building static analysis tools in JavaScript.
 
 See the following tools:
 
-+ [dump_describes][dump_describes]
-+ [rupert][rupert]
-+ [stank][stank]
++ [dump_describes]
++ [rupert-fp]
++ [stank]
 
 ## Installation
 
 `npm install https://github.com/btoll/onf-static.git -g`
 
 [dump_describes]: https://github.com/btoll/dump_describes
-[rupert]: https://github.com/btoll/rupert
+[rupert-fp]: https://github.com/btoll/rupert-fp
 [stank]: https://github.com/btoll/stank
 
