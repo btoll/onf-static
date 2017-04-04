@@ -9,6 +9,7 @@ let defaultOptions = {
     active: false,
     inactive: false,
     useMap: false,
+    debug: false,
     verbose: false
 };
 
@@ -29,6 +30,7 @@ const getSuite = (file, isData = false) =>
         }
     });
 
+// TODO: Give `options` a default value?
 const makeTree = (file, generator, options, isData = false) => {
     const opts = options || defaultOptions;
 
@@ -94,6 +96,10 @@ const register = v => {
     logger.debug(lineSeparator);
 };
 
+// TODO: This is just a temporary solution.
+const setDebugLevel = s =>
+    logger.setLogLevel(s);
+
 const setOptions = options =>
     defaultOptions = options;
 
@@ -116,6 +122,7 @@ const visitTree = (suite, options) => {
 module.exports = {
     makeTree,
     register,
+    setDebugLevel,
     setOptions
 };
 
