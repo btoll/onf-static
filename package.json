@@ -1,6 +1,6 @@
 {
   "name": "onf-static",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "`npm install https://github.com/btoll/onf-static.git -g`",
   "main": "./src/index.js",
   "repository": {
