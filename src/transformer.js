@@ -237,6 +237,10 @@ const get = ctx => {
             value = 'this';
             break;
 
+        case 'TryStatement':
+            console.log('got here');
+            break;
+
         case 'UnaryExpression':
         case 'UpdateExpression':
             const arg = node.argument;
