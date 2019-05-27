@@ -1,11 +1,12 @@
 'use strict';
 
 const fs = require('fs');
+const jsBeautify = require('js-beautify').js_beautify;
 const path = require('path');
 const transformer = require('../transformer');
 
 module.exports = {
-    makeTpl: (file, results) =>
+    makeTpl: (fileame, results) =>
         `<!DOCTYPE html>
             <html>
             <head>
@@ -43,13 +44,13 @@ module.exports = {
             </head>
 
             <body>
-                <h3>Functional pattern analysis of file ${file}</h3>
+                <h3>Functional pattern analysis of file ${fileame}</h3>
                 ${results}
             </body>
             </html>
         `,
 
-    print: function (results, file) {
+    print: function (results, options) {
         return new Promise((resolve, reject) => {
             const rows = [];
 
@@ -61,16 +62,16 @@ module.exports = {
                     `<p class="lines">Type <span>${entry.type}</span>, Lines ${loc.start.line} - ${loc.end.line}</p>`,
                     desc ? `<p class="lines"><span>${desc}</span></p>` : '',
                     `<div>
-                        <p>${transformer.getNodeValue(entry)}</p>
+                        <p><pre>${jsBeautify(transformer.getNodeValue(entry))}</pre></p>
                     </div>`
                 ].join('\n'));
             }
 
-            fs.writeFile(`${path.basename(file)}_.html`, this.makeTpl(file, rows.join('')), 'utf8', err => {
+            fs.writeFile(`${options.destination}/${options.filename}_suite.html`, this.makeTpl(options.filename, rows.join('')), 'utf8', err => {
                 if (err) {
-                    reject('[ERROR] Oh no, something went wrong!');
+                    reject('Oh no, something went wrong!');
                 } else {
-                    resolve(`Functional pattern analysis of ${file} completed successfully.`);
+                    resolve(`Functional pattern analysis of ${options.filename} completed successfully.`);
                 }
             });
         });
