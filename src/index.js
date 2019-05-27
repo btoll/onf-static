@@ -3,28 +3,29 @@
 const esprima = require('esprima');
 const fs = require('fs');
 const logger = require('onf-logger');
-const visitor = require('./visitor');
-
-const format = {
-    html: require('./generator/html.js'),
-    log: require('./generator/log.js'),
-//    markdown: require('./generator/markdown.js')
-};
+const defaultVisitor = require('./visitor');
+const htmlGenerator = require('./generator/html.js');
+const logGenerator = require('./generator/log.js');
+//const markdownGenerator = require('./generator/markdown.js');
 
 let defaultOptions = {
-    active: false,
-    destination: '.',
-    filename: +(new Date()), // Unix timestamp.
-    format: 'log',
-    inactive: false,
-    useMap: false,
     debug: false,
-    verbose: false
+    destination: '.',
+    filename: `cli_${+(new Date())}`, // Unix timestamp.
+    generator: {
+        html: htmlGenerator,
+        log: logGenerator,
+//        markdown: markdownGenerator
+    },
+    type: 'log',
+    useMap: false,
+    verbose: 0,
+    visitor: null
 };
 
 const lineSeparator = '----------------------';
 
-const getSuite = (filename, isData = false) =>
+const getFile = (filename, isData = false) =>
     new Promise((resolve, reject) => {
         if (isData) {
             resolve(filename);
@@ -54,7 +55,7 @@ const makeTree = (filename, isData = false) => {
     logger.debug(`Reading from ${isData ? 'STDIN' : filename}`);
     logger.debug(lineSeparator);
 
-    return getSuite(filename, isData)
+    return getFile(filename, isData)
     .then(suite => {
         let nodes;
 
@@ -63,12 +64,12 @@ const makeTree = (filename, isData = false) => {
         logger.debug(lineSeparator);
 
         try {
-            nodes = visitTree(suite, defaultOptions);
+            nodes = visitTree(suite);
         } catch (err) {
             const errMsg = 'Invalid JavaScript';
 
             logger.fatal(errMsg);
-            throw new Error(errMsg);
+            throw new Error(err);
         }
 
         // TODO: This is clunky.
@@ -87,7 +88,7 @@ const makeTree = (filename, isData = false) => {
                 'No results found'
             ) :
             (
-                logger.debug('Printing'),
+                logger.debug('Printing nodes'),
                 generator.print(nodes, Object.assign(getOptions(), { filename }))
             );
     });
@@ -96,17 +97,10 @@ const makeTree = (filename, isData = false) => {
 const setDebugLevel = s =>
     logger.setLogLevel(s);
 
-const getFormat = () =>
-    format;
-
-const setFormat = fmt =>
-    generator = fmt;
-
-const getGenerator = () =>
-    format[getOptions().format];
-
-const setGenerator = (k, v) =>
-    format[k] = v;
+const getGenerator = () => {
+    const opts = getOptions();
+    return opts.generator[opts.type];
+};
 
 const getOptions = () =>
     defaultOptions
@@ -114,23 +108,34 @@ const getOptions = () =>
 const setOptions = (options = {}) =>
     defaultOptions = Object.assign(defaultOptions, options);
 
-const setVisitor = v => {
+const getVisitor = () => {
     logger.debug(lineSeparator);
 
-    for (const type of Object.keys(v)) {
-        visitor[type] = v[type];
-        logger.debug('Registering type ->', type);
+    let visitor = getOptions().visitor;
+
+    if (!visitor) {
+        logger.debug('** Registering default visitor type **');
+        return defaultVisitor;
+    } else {
+        logger.debug('** Registering custom visitor type **');
+
+        for (const type of Object.keys(visitor)) {
+            visitor = Object.assign(defaultVisitor, visitor);
+            logger.debug('Registering type ->', type);
+        }
+
+        logger.debug(lineSeparator);
+
+        return visitor;
     }
-
-    logger.debug(lineSeparator);
 };
 
 const visitTree = suite => {
-    const container = defaultOptions.useMap ?
+    const container = getOptions().useMap ?
         new Map() :
         [];
 
-    return visitor.visit(esprima.parse(suite, {
+    return getVisitor().visit(esprima.parse(suite, {
         // Ariya says having this set to `module` is best practice!
         sourceType: 'module',
         comment: true,
@@ -140,9 +145,6 @@ const visitTree = suite => {
 
 module.exports = {
     makeTree,
-    setDebugLevel,
-    setGenerator,
-    setOptions,
-    setVisitor
+    setOptions
 };
 
