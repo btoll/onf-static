@@ -7,6 +7,8 @@ const visitor = require('./visitor');
 
 let defaultOptions = {
     active: false,
+    destination: '.',
+    filename: +(new Date()), // Unix timestamp.
     inactive: false,
     useMap: false,
     debug: false,
@@ -30,10 +32,7 @@ const getSuite = (file, isData = false) =>
         }
     });
 
-// TODO: Give `options` a default value?
-const makeTree = (file, generator, options, isData = false) => {
-    const opts = options || defaultOptions;
-
+const makeTree = (file, generator, isData = false) => {
     if (!file) {
         throw new Error('No file given');
     }
@@ -55,7 +54,7 @@ const makeTree = (file, generator, options, isData = false) => {
         logger.debug(lineSeparator);
 
         try {
-            nodes = visitTree(suite, opts);
+            nodes = visitTree(suite, defaultOptions);
         } catch (err) {
             const errMsg = 'Invalid JavaScript';
 
@@ -64,7 +63,7 @@ const makeTree = (file, generator, options, isData = false) => {
         }
 
         // TODO: This is clunky.
-        const len = !opts.useMap ?
+        const len = !defaultOptions.useMap ?
             nodes.length :
             nodes.size;
 
@@ -80,7 +79,7 @@ const makeTree = (file, generator, options, isData = false) => {
             ) :
             (
                 logger.debug('Printing'),
-                generator.print(nodes, opts)
+                generator.print(nodes, defaultOptions)
             );
     });
 };
@@ -100,14 +99,11 @@ const register = v => {
 const setDebugLevel = s =>
     logger.setLogLevel(s);
 
-const setOptions = options =>
-    defaultOptions = options;
+const setOptions = (options = {}) =>
+    defaultOptions = Object.assign(defaultOptions, options);
 
-const visitTree = (suite, options) => {
-    // TODO: Make better?
-    visitor.options = options;
-
-    const container = options.useMap ?
+const visitTree = suite => {
+    const container = defaultOptions.useMap ?
         new Map() :
         [];
 
