@@ -5,10 +5,17 @@ const fs = require('fs');
 const logger = require('onf-logger');
 const visitor = require('./visitor');
 
+const format = {
+    html: require('./generator/html.js'),
+    log: require('./generator/log.js'),
+//    markdown: require('./generator/markdown.js')
+};
+
 let defaultOptions = {
     active: false,
     destination: '.',
     filename: +(new Date()), // Unix timestamp.
+    format: 'log',
     inactive: false,
     useMap: false,
     debug: false,
@@ -17,12 +24,12 @@ let defaultOptions = {
 
 const lineSeparator = '----------------------';
 
-const getSuite = (file, isData = false) =>
+const getSuite = (filename, isData = false) =>
     new Promise((resolve, reject) => {
         if (isData) {
-            resolve(file);
+            resolve(filename);
         } else {
-            fs.readFile(file, 'utf8', (err, fileContents) => {
+            fs.readFile(filename, 'utf8', (err, fileContents) => {
                 if (err) {
                     reject('There was a problem processing the file.');
                 } else {
@@ -32,20 +39,22 @@ const getSuite = (file, isData = false) =>
         }
     });
 
-const makeTree = (file, generator, isData = false) => {
-    if (!file) {
+const makeTree = (filename, isData = false) => {
+    if (!filename) {
         throw new Error('No file given');
     }
+
+    const generator = getGenerator();
 
     if (!generator) {
         throw new Error('No generator given');
     }
 
     logger.debug(lineSeparator);
-    logger.debug(`Reading from ${isData ? 'STDIN' : file}`);
+    logger.debug(`Reading from ${isData ? 'STDIN' : filename}`);
     logger.debug(lineSeparator);
 
-    return getSuite(file, isData)
+    return getSuite(filename, isData)
     .then(suite => {
         let nodes;
 
@@ -63,7 +72,7 @@ const makeTree = (file, generator, isData = false) => {
         }
 
         // TODO: This is clunky.
-        const len = !defaultOptions.useMap ?
+        const len = !getOptions().useMap ?
             nodes.length :
             nodes.size;
 
@@ -79,12 +88,33 @@ const makeTree = (file, generator, isData = false) => {
             ) :
             (
                 logger.debug('Printing'),
-                generator.print(nodes, defaultOptions)
+                generator.print(nodes, Object.assign(getOptions(), { filename }))
             );
     });
 };
 
-const register = v => {
+const setDebugLevel = s =>
+    logger.setLogLevel(s);
+
+const getFormat = () =>
+    format;
+
+const setFormat = fmt =>
+    generator = fmt;
+
+const getGenerator = () =>
+    format[getOptions().format];
+
+const setGenerator = (k, v) =>
+    format[k] = v;
+
+const getOptions = () =>
+    defaultOptions
+
+const setOptions = (options = {}) =>
+    defaultOptions = Object.assign(defaultOptions, options);
+
+const setVisitor = v => {
     logger.debug(lineSeparator);
 
     for (const type of Object.keys(v)) {
@@ -95,20 +125,13 @@ const register = v => {
     logger.debug(lineSeparator);
 };
 
-// TODO: This is just a temporary solution.
-const setDebugLevel = s =>
-    logger.setLogLevel(s);
-
-const setOptions = (options = {}) =>
-    defaultOptions = Object.assign(defaultOptions, options);
-
 const visitTree = suite => {
     const container = defaultOptions.useMap ?
         new Map() :
         [];
 
     return visitor.visit(esprima.parse(suite, {
-        // Having this set to `module` is best practice!
+        // Ariya says having this set to `module` is best practice!
         sourceType: 'module',
         comment: true,
         loc: true
@@ -117,8 +140,9 @@ const visitTree = suite => {
 
 module.exports = {
     makeTree,
-    register,
     setDebugLevel,
-    setOptions
+    setGenerator,
+    setOptions,
+    setVisitor
 };
 
