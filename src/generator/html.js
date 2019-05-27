@@ -67,7 +67,7 @@ module.exports = {
                 ].join('\n'));
             }
 
-            fs.writeFile(`${options.destination}/${options.filename}_suite.html`, this.makeTpl(options.filename, rows.join('')), 'utf8', err => {
+            fs.writeFile(`${options.destination}/${path.basename(options.filename)}_suite.html`, this.makeTpl(options.filename, rows.join('')), 'utf8', err => {
                 if (err) {
                     reject('Oh no, something went wrong!');
                 } else {
