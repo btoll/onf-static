@@ -145,6 +145,8 @@ const visitTree = suite => {
 
 module.exports = {
     makeTree,
-    setOptions
+    getOptions,
+    setOptions,
+    setDebugLevel
 };
 
