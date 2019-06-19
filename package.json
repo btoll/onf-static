@@ -10,7 +10,7 @@
   "author": "Benjamin Toll",
   "license": "GPLv3",
   "dependencies": {
-    "esprima": "^2.7.2",
+    "esprima": ">=4.x",
     "js-beautify": "^1.6.2",
     "onf-logger": "git+https://github.com/btoll/onf-logger.git",
     "yargs": "^4.6.0"
